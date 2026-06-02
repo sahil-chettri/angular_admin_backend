@@ -1,0 +1,861 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model academic_years {
+  id               Int                @id @default(autoincrement())
+  label            String             @unique @db.VarChar(20)
+  start_date       DateTime           @db.Date
+  end_date         DateTime           @db.Date
+  is_current       Boolean            @default(false)
+  classes          classes[]
+  exams            exams[]
+  fee_structures   fee_structures[]
+  report_cards     report_cards[]
+  subject_progress subject_progress[]
+}
+
+model activity_log {
+  id          Int      @id @default(autoincrement())
+  user_id     String?  @db.Uuid
+  action      String   @db.VarChar(200)
+  entity_type String?  @db.VarChar(80)
+  entity_id   String?
+  icon_url    String?
+  avatar_url  String?
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  users       users?   @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([created_at(sort: Desc)], map: "idx_activity_created")
+  @@index([user_id], map: "idx_activity_user")
+}
+
+model appointments {
+  id                                   Int         @id @default(autoincrement())
+  patient_id                           String      @db.Uuid
+  doctor_id                            String?     @db.Uuid
+  appointment_date                     DateTime    @db.Timestamptz(6)
+  type                                 String      @default("consultation") @db.VarChar(80)
+  status                               task_status @default(Pending)
+  notes                                String?
+  created_at                           DateTime    @default(now()) @db.Timestamptz(6)
+  users_appointments_doctor_idTousers  users?      @relation("appointments_doctor_idTousers", fields: [doctor_id], references: [id], onUpdate: NoAction)
+  users_appointments_patient_idTousers users       @relation("appointments_patient_idTousers", fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model assignments {
+  id                  Int                   @id @default(autoincrement())
+  title               String                @db.VarChar(200)
+  subject_id          Int
+  class_id            Int?
+  teacher_id          String?               @db.Uuid
+  due_date            DateTime              @db.Date
+  description         String?
+  max_marks           Decimal?              @db.Decimal(6, 2)
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  classes             classes?              @relation(fields: [class_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subjects            subjects              @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teachers            teachers?             @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  student_assignments student_assignments[]
+}
+
+model chart_timeseries {
+  id          Int      @id @default(autoincrement())
+  series_name String   @db.VarChar(100)
+  recorded_at DateTime @db.Date
+  value       Decimal  @db.Decimal(15, 2)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([series_name, recorded_at])
+  @@index([series_name, recorded_at(sort: Desc)], map: "idx_chart_ts_series")
+}
+
+model chat_conversations {
+  id                Int                 @id @default(autoincrement())
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  chat_messages     chat_messages[]
+  chat_participants chat_participants[]
+}
+
+model chat_messages {
+  id                 Int                @id @default(autoincrement())
+  conversation_id    Int
+  sender_id          String             @db.Uuid
+  message_type       message_type       @default(text)
+  content            String
+  file_url           String?
+  sent_at            DateTime           @default(now()) @db.Timestamptz(6)
+  is_read            Boolean            @default(false)
+  chat_conversations chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users              users              @relation(fields: [sender_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([conversation_id], map: "idx_chat_msg_conv")
+  @@index([sender_id], map: "idx_chat_msg_sender")
+  @@index([sent_at(sort: Desc)], map: "idx_chat_msg_sent_at")
+}
+
+model chat_participants {
+  conversation_id    Int
+  user_id            String             @db.Uuid
+  joined_at          DateTime           @default(now()) @db.Timestamptz(6)
+  chat_conversations chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users              users              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([conversation_id, user_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model class_schedules {
+  id          Int      @id @default(autoincrement())
+  class_id    Int
+  subject_id  Int
+  teacher_id  String   @db.Uuid
+  day_of_week Int      @db.SmallInt
+  start_time  DateTime @db.Time(6)
+  end_time    DateTime @db.Time(6)
+  room        String?  @db.VarChar(50)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  classes     classes  @relation(fields: [class_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subjects    subjects @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teachers    teachers @relation(fields: [teacher_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model classes {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @db.VarChar(100)
+  academic_year_id   Int
+  department_id      Int?
+  capacity           Int?                 @db.SmallInt
+  created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  assignments        assignments[]
+  class_schedules    class_schedules[]
+  academic_years     academic_years       @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  departments        departments?         @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  exams              exams[]
+  fee_structures     fee_structures[]
+  report_cards       report_cards[]
+  student_attendance student_attendance[]
+  students           students[]
+
+  @@unique([name, academic_year_id])
+}
+
+model comments {
+  id          Int      @id @default(autoincrement())
+  user_id     String   @db.Uuid
+  entity_type String   @db.VarChar(80)
+  entity_id   String
+  content     String
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @default(now()) @db.Timestamptz(6)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model dashboard_stats {
+  id                Int      @id @default(autoincrement())
+  stat_key          String   @unique @db.VarChar(100)
+  stat_value        Decimal  @default(0) @db.Decimal(15, 2)
+  percentage_change Decimal? @db.Decimal(6, 2)
+  is_increase       Boolean?
+  last_updated      DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model departments {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique @db.VarChar(150)
+  code        String?     @unique @db.VarChar(20)
+  description String?
+  created_at  DateTime    @default(now()) @db.Timestamptz(6)
+  classes     classes[]
+  employees   employees[]
+  subjects    subjects[]
+  teachers    teachers[]
+}
+
+model documents {
+  id           Int      @id @default(autoincrement())
+  title        String   @db.VarChar(200)
+  file_type    doc_type @default(other)
+  file_size_mb Decimal? @db.Decimal(8, 2)
+  file_url     String?
+  uploaded_by  String?  @db.Uuid
+  entity_type  String?  @db.VarChar(80)
+  entity_id    String?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  users        users?   @relation(fields: [uploaded_by], references: [id], onUpdate: NoAction)
+}
+
+model earnings {
+  id          Int             @id @default(autoincrement())
+  category    income_category
+  amount      Decimal         @db.Decimal(12, 2)
+  description String?
+  earned_on   DateTime        @default(dbgenerated("CURRENT_DATE")) @db.Date
+  recorded_by String?         @db.Uuid
+  created_at  DateTime        @default(now()) @db.Timestamptz(6)
+  users       users?          @relation(fields: [recorded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model employee_status {
+  id           Int       @id @default(autoincrement())
+  employee_id  String    @db.Uuid
+  status_label String    @db.VarChar(100)
+  since        DateTime  @default(now()) @db.Timestamptz(6)
+  employees    employees @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model employees {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String            @unique @db.Uuid
+  first_name      String            @db.VarChar(80)
+  last_name       String            @db.VarChar(80)
+  gender          gender_type?
+  date_of_birth   DateTime?         @db.Date
+  phone           String?           @db.VarChar(20)
+  address         String?
+  department_id   Int?
+  job_title       String?           @db.VarChar(150)
+  joining_date    DateTime?         @db.Date
+  salary          Decimal?          @db.Decimal(12, 2)
+  avatar_url      String?
+  is_active       Boolean           @default(true)
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @default(now()) @db.Timestamptz(6)
+  employee_status employee_status[]
+  departments     departments?      @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users           users             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model events {
+  id          Int        @id @default(autoincrement())
+  title       String     @db.VarChar(200)
+  event_type  event_type @default(other)
+  description String?
+  event_date  DateTime   @db.Date
+  start_time  DateTime?  @db.Time(6)
+  end_time    DateTime?  @db.Time(6)
+  is_all_day  Boolean    @default(false)
+  status      String     @default("Upcoming") @db.VarChar(50)
+  created_by  String?    @db.Uuid
+  created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  users       users?     @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([event_date], map: "idx_events_date")
+  @@index([event_type], map: "idx_events_type")
+}
+
+model exams {
+  id               Int             @id @default(autoincrement())
+  title            String          @db.VarChar(200)
+  class_id         Int?
+  subject_id       Int?
+  exam_type        String?         @db.VarChar(50)
+  start_date       DateTime        @db.Date
+  end_date         DateTime        @db.Date
+  max_marks        Decimal         @default(100) @db.Decimal(6, 2)
+  pass_marks       Decimal         @default(35) @db.Decimal(6, 2)
+  academic_year_id Int?
+  created_at       DateTime        @default(now()) @db.Timestamptz(6)
+  academic_years   academic_years? @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  classes          classes?        @relation(fields: [class_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subjects         subjects?       @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  grades           grades[]
+
+  @@index([class_id], map: "idx_exams_class")
+  @@index([start_date, end_date], map: "idx_exams_dates")
+}
+
+model fee_payments {
+  id               Int            @id @default(autoincrement())
+  student_id       String         @db.Uuid
+  fee_structure_id Int
+  amount_paid      Decimal        @db.Decimal(10, 2)
+  payment_date     DateTime       @default(dbgenerated("CURRENT_DATE")) @db.Date
+  payment_status   payment_status @default(unpaid)
+  payment_method   String?        @db.VarChar(50)
+  transaction_ref  String?        @db.VarChar(100)
+  remarks          String?
+  recorded_by      String?        @db.Uuid
+  created_at       DateTime       @default(now()) @db.Timestamptz(6)
+  fee_structures   fee_structures @relation(fields: [fee_structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users            users?         @relation(fields: [recorded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  students         students       @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([payment_status], map: "idx_fee_payments_status")
+  @@index([student_id], map: "idx_fee_payments_stu")
+}
+
+model fee_structures {
+  id               Int            @id @default(autoincrement())
+  class_id         Int
+  academic_year_id Int
+  fee_label        String         @db.VarChar(100)
+  amount           Decimal        @db.Decimal(10, 2)
+  due_date         DateTime?      @db.Date
+  fee_payments     fee_payments[]
+  academic_years   academic_years @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  classes          classes        @relation(fields: [class_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([class_id, academic_year_id, fee_label])
+}
+
+model grades {
+  id             Int      @id @default(autoincrement())
+  student_id     String   @db.Uuid
+  exam_id        Int
+  marks_obtained Decimal  @db.Decimal(6, 2)
+  grade_letter   String?  @db.VarChar(5)
+  remarks        String?
+  graded_by      String?  @db.Uuid
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  exams          exams    @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users          users?   @relation(fields: [graded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  students       students @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([student_id, exam_id])
+  @@index([exam_id], map: "idx_grades_exam")
+  @@index([student_id], map: "idx_grades_student")
+}
+
+model medicines {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(200)
+  generic_name  String?         @db.VarChar(200)
+  form          medicine_form   @default(tablet)
+  icon_class    String?         @db.VarChar(100)
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  prescriptions prescriptions[]
+}
+
+model notices {
+  id           Int         @id @default(autoincrement())
+  title        String      @db.VarChar(200)
+  body         String
+  notice_type  notice_type @default(general)
+  target_role  user_role?
+  published_at DateTime    @default(now()) @db.Timestamptz(6)
+  expires_at   DateTime?   @db.Timestamptz(6)
+  is_active    Boolean     @default(true)
+  created_by   String?     @db.Uuid
+  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  users        users?      @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model order_items {
+  id         Int      @id @default(autoincrement())
+  order_id   Int
+  product_id Int
+  quantity   Int      @default(1)
+  unit_price Decimal  @db.Decimal(10, 2)
+  subtotal   Decimal? @default(dbgenerated("((quantity)::numeric * unit_price)")) @db.Decimal(12, 2)
+  orders     orders   @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model orders {
+  id               Int            @id @default(autoincrement())
+  order_number     String         @unique @db.VarChar(50)
+  customer_id      String         @db.Uuid
+  status           order_status   @default(pending)
+  total_amount     Decimal        @default(0) @db.Decimal(12, 2)
+  payment_status   payment_status @default(unpaid)
+  shipping_address String?
+  notes            String?
+  ordered_at       DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime       @default(now()) @db.Timestamptz(6)
+  order_items      order_items[]
+  users            users          @relation(fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([customer_id], map: "idx_orders_customer")
+  @@index([status], map: "idx_orders_status")
+}
+
+model permissions {
+  id               Int                @id @default(autoincrement())
+  name             String             @unique @db.VarChar(100)
+  description      String?
+  role_permissions role_permissions[]
+}
+
+model posts {
+  id           Int         @id @default(autoincrement())
+  title        String      @db.VarChar(300)
+  slug         String      @unique @db.VarChar(300)
+  content      String?
+  cover_image  String?
+  author_id    String      @db.Uuid
+  status       post_status @default(draft)
+  published_at DateTime?   @db.Timestamptz(6)
+  tags         String[]
+  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime    @default(now()) @db.Timestamptz(6)
+  users        users       @relation(fields: [author_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([author_id], map: "idx_posts_author")
+  @@index([status], map: "idx_posts_status")
+}
+
+model prescriptions {
+  id                                       Int       @id @default(autoincrement())
+  patient_id                               String    @db.Uuid
+  medicine_id                              Int
+  dosage                                   String    @db.VarChar(50)
+  prescribed_by                            String?   @db.Uuid
+  start_date                               DateTime  @default(dbgenerated("CURRENT_DATE")) @db.Date
+  end_date                                 DateTime? @db.Date
+  notes                                    String?
+  created_at                               DateTime  @default(now()) @db.Timestamptz(6)
+  medicines                                medicines @relation(fields: [medicine_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_prescriptions_patient_idTousers    users     @relation("prescriptions_patient_idTousers", fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users_prescriptions_prescribed_byTousers users?    @relation("prescriptions_prescribed_byTousers", fields: [prescribed_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model products {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(200)
+  sku         String?       @unique @db.VarChar(80)
+  description String?
+  price       Decimal       @default(0) @db.Decimal(10, 2)
+  stock_qty   Int           @default(0)
+  image_url   String?
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  order_items order_items[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model project_hours {
+  id          Int      @id @default(autoincrement())
+  project_id  Int
+  user_id     String   @db.Uuid
+  logged_date DateTime @default(dbgenerated("CURRENT_DATE")) @db.Date
+  hours       Decimal  @db.Decimal(5, 2)
+  description String?
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  projects    projects @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model projects {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(200)
+  description   String?
+  start_date    DateTime?       @db.Date
+  end_date      DateTime?       @db.Date
+  owner_id      String?         @db.Uuid
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  project_hours project_hours[]
+  users         users?          @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model quick_notes {
+  id         Int      @id @default(autoincrement())
+  user_id    String   @db.Uuid
+  content    String
+  color      String?  @default("yellow") @db.VarChar(20)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model report_card_subjects {
+  id             Int          @id @default(autoincrement())
+  report_card_id Int
+  subject_id     Int
+  marks_obtained Decimal      @db.Decimal(6, 2)
+  max_marks      Decimal      @default(100) @db.Decimal(6, 2)
+  grade_letter   String?      @db.VarChar(5)
+  remarks        String?
+  report_cards   report_cards @relation(fields: [report_card_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subjects       subjects     @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model report_cards {
+  id                   Int                    @id @default(autoincrement())
+  student_id           String                 @db.Uuid
+  academic_year_id     Int
+  class_id             Int
+  total_marks          Decimal?               @db.Decimal(8, 2)
+  obtained_marks       Decimal?               @db.Decimal(8, 2)
+  percentage           Decimal?               @default(dbgenerated("\nCASE\n    WHEN (total_marks > (0)::numeric) THEN ((obtained_marks / total_marks) * (100)::numeric)\n    ELSE (0)::numeric\nEND")) @db.Decimal(5, 2)
+  grade_letter         String?                @db.VarChar(5)
+  rank                 Int?
+  remarks              String?
+  issued_on            DateTime               @default(dbgenerated("CURRENT_DATE")) @db.Date
+  created_at           DateTime               @default(now()) @db.Timestamptz(6)
+  report_card_subjects report_card_subjects[]
+  academic_years       academic_years         @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  classes              classes                @relation(fields: [class_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  students             students               @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([student_id, academic_year_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model reviews {
+  id          Int      @id @default(autoincrement())
+  reviewer_id String   @db.Uuid
+  entity_type String   @db.VarChar(80)
+  entity_id   String
+  rating      Decimal  @db.Decimal(3, 1)
+  comment     String?
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  users       users    @relation(fields: [reviewer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model role_permissions {
+  role        user_role
+  permission  String      @db.VarChar(100)
+  permissions permissions @relation(fields: [permission], references: [name], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([role, permission])
+}
+
+model student_assignments {
+  id             Int         @id @default(autoincrement())
+  assignment_id  Int
+  student_id     String      @db.Uuid
+  submitted_at   DateTime?   @db.Timestamptz(6)
+  marks_obtained Decimal?    @db.Decimal(6, 2)
+  status         task_status @default(Pending)
+  remarks        String?
+  assignments    assignments @relation(fields: [assignment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  students       students    @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([assignment_id, student_id])
+}
+
+model student_attendance {
+  id          Int               @id @default(autoincrement())
+  student_id  String            @db.Uuid
+  class_id    Int
+  subject_id  Int?
+  date        DateTime          @db.Date
+  status      attendance_status @default(present)
+  remarks     String?
+  recorded_by String?           @db.Uuid
+  created_at  DateTime          @default(now()) @db.Timestamptz(6)
+  classes     classes           @relation(fields: [class_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users       users?            @relation(fields: [recorded_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  students    students          @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subjects    subjects?         @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([student_id, subject_id, date])
+  @@index([date], map: "idx_student_att_date")
+  @@index([student_id], map: "idx_student_att_stu")
+}
+
+model students {
+  id                  String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id             String?               @unique @db.Uuid
+  roll_number         String                @unique @db.VarChar(30)
+  first_name          String                @db.VarChar(80)
+  last_name           String                @db.VarChar(80)
+  gender              gender_type?
+  date_of_birth       DateTime?             @db.Date
+  phone               String?               @db.VarChar(20)
+  parent_phone        String?               @db.VarChar(20)
+  address             String?
+  class_id            Int?
+  avatar_url          String?
+  joining_date        DateTime              @default(dbgenerated("CURRENT_DATE")) @db.Date
+  created_at          DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime              @default(now()) @db.Timestamptz(6)
+  fee_payments        fee_payments[]
+  grades              grades[]
+  report_cards        report_cards[]
+  student_assignments student_assignments[]
+  student_attendance  student_attendance[]
+  classes             classes?              @relation(fields: [class_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users               users?                @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+  subject_progress    subject_progress[]
+
+  @@index([class_id], map: "idx_students_class")
+  @@index([roll_number], map: "idx_students_roll")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model subject_progress {
+  id               Int             @id @default(autoincrement())
+  student_id       String          @db.Uuid
+  subject_id       Int
+  academic_year_id Int?
+  progress_pct     Int             @default(0) @db.SmallInt
+  duration_months  Int?            @db.SmallInt
+  updated_at       DateTime        @default(now()) @db.Timestamptz(6)
+  academic_years   academic_years? @relation(fields: [academic_year_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  students         students        @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subjects         subjects        @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([student_id, subject_id, academic_year_id])
+}
+
+model subjects {
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @db.VarChar(150)
+  code                 String?                @unique @db.VarChar(20)
+  department_id        Int?
+  description          String?
+  created_at           DateTime               @default(now()) @db.Timestamptz(6)
+  assignments          assignments[]
+  class_schedules      class_schedules[]
+  exams                exams[]
+  report_card_subjects report_card_subjects[]
+  student_attendance   student_attendance[]
+  subject_progress     subject_progress[]
+  departments          departments?           @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teacher_schedule     teacher_schedule[]
+  teacher_subjects     teacher_subjects[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tasks {
+  id                             Int            @id @default(autoincrement())
+  title                          String         @db.VarChar(200)
+  details                        String?
+  assigned_to                    String?        @db.Uuid
+  assigned_by                    String?        @db.Uuid
+  status                         task_status    @default(Pending)
+  priority                       priority_level @default(Normal)
+  progress_pct                   Int            @default(0) @db.SmallInt
+  due_date                       DateTime?      @db.Date
+  created_at                     DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime       @default(now()) @db.Timestamptz(6)
+  users_tasks_assigned_byTousers users?         @relation("tasks_assigned_byTousers", fields: [assigned_by], references: [id], onUpdate: NoAction)
+  users_tasks_assigned_toTousers users?         @relation("tasks_assigned_toTousers", fields: [assigned_to], references: [id], onUpdate: NoAction)
+
+  @@index([assigned_to], map: "idx_tasks_assigned_to")
+}
+
+model teacher_attendance {
+  id         Int               @id @default(autoincrement())
+  teacher_id String            @db.Uuid
+  date       DateTime          @db.Date
+  status     attendance_status @default(present)
+  remarks    String?
+  created_at DateTime          @default(now()) @db.Timestamptz(6)
+  teachers   teachers          @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([teacher_id, date])
+  @@index([date], map: "idx_teacher_att_date")
+}
+
+model teacher_schedule {
+  id           Int       @id @default(autoincrement())
+  teacher_id   String    @db.Uuid
+  subject_id   Int?
+  session_date DateTime  @db.Date
+  start_time   DateTime  @db.Time(6)
+  end_time     DateTime  @db.Time(6)
+  notes        String?
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  subjects     subjects? @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teachers     teachers  @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model teacher_subjects {
+  teacher_id String   @db.Uuid
+  subject_id Int
+  subjects   subjects @relation(fields: [subject_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  teachers   teachers @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([teacher_id, subject_id])
+}
+
+model teachers {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id            String               @unique @db.Uuid
+  first_name         String               @db.VarChar(80)
+  last_name          String               @db.VarChar(80)
+  gender             gender_type?
+  date_of_birth      DateTime?            @db.Date
+  phone              String?              @db.VarChar(20)
+  address            String?
+  department_id      Int?
+  qualification      String?              @db.VarChar(200)
+  joining_date       DateTime?            @db.Date
+  avatar_url         String?
+  created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime             @default(now()) @db.Timestamptz(6)
+  assignments        assignments[]
+  class_schedules    class_schedules[]
+  teacher_attendance teacher_attendance[]
+  teacher_schedule   teacher_schedule[]
+  teacher_subjects   teacher_subjects[]
+  departments        departments?         @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users              users                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([department_id], map: "idx_teachers_dept")
+}
+
+model todos {
+  id         Int            @id @default(autoincrement())
+  user_id    String         @db.Uuid
+  title      String         @db.VarChar(200)
+  done       Boolean        @default(false)
+  priority   priority_level @default(Normal)
+  due_date   DateTime?      @db.Date
+  created_at DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at DateTime       @default(now()) @db.Timestamptz(6)
+  users      users          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_todos_user")
+}
+
+model users {
+  id                                               String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username                                         String               @unique @db.VarChar(80)
+  email                                            String               @unique @db.Citext
+  password_hash                                    String
+  role                                             user_role            @default(student)
+  avatar_url                                       String?
+  is_active                                        Boolean              @default(true)
+  last_login                                       DateTime?            @db.Timestamptz(6)
+  created_at                                       DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at                                       DateTime             @default(now()) @db.Timestamptz(6)
+  activity_log                                     activity_log[]
+  appointments_appointments_doctor_idTousers       appointments[]       @relation("appointments_doctor_idTousers")
+  appointments_appointments_patient_idTousers      appointments[]       @relation("appointments_patient_idTousers")
+  chat_messages                                    chat_messages[]
+  chat_participants                                chat_participants[]
+  comments                                         comments[]
+  documents                                        documents[]
+  earnings                                         earnings[]
+  employees                                        employees?
+  events                                           events[]
+  fee_payments                                     fee_payments[]
+  grades                                           grades[]
+  notices                                          notices[]
+  orders                                           orders[]
+  posts                                            posts[]
+  prescriptions_prescriptions_patient_idTousers    prescriptions[]      @relation("prescriptions_patient_idTousers")
+  prescriptions_prescriptions_prescribed_byTousers prescriptions[]      @relation("prescriptions_prescribed_byTousers")
+  project_hours                                    project_hours[]
+  projects                                         projects[]
+  quick_notes                                      quick_notes[]
+  reviews                                          reviews[]
+  student_attendance                               student_attendance[]
+  students                                         students?
+  tasks_tasks_assigned_byTousers                   tasks[]              @relation("tasks_assigned_byTousers")
+  tasks_tasks_assigned_toTousers                   tasks[]              @relation("tasks_assigned_toTousers")
+  teachers                                         teachers?
+  todos                                            todos[]
+
+  @@index([email], map: "idx_users_email")
+  @@index([role], map: "idx_users_role")
+}
+
+enum attendance_status {
+  present
+  absent
+  late
+  excused
+}
+
+enum doc_type {
+  doc   @map(".doc")
+  xls   @map(".xls")
+  pdf   @map(".pdf")
+  zip   @map(".zip")
+  ppt   @map(".ppt")
+  txt   @map(".txt")
+  other @map(".other")
+}
+
+enum event_type {
+  exam
+  holiday
+  meeting
+  activity
+  other
+}
+
+enum gender_type {
+  male
+  female
+  other
+}
+
+enum income_category {
+  fees
+  donations
+  grants
+  sales
+  other
+}
+
+enum medicine_form {
+  tablet
+  capsule
+  injection
+  syrup
+  topical
+  other
+}
+
+enum message_type {
+  text
+  image
+  file
+}
+
+enum notice_type {
+  general
+  exam
+  event
+  urgent
+  holiday
+}
+
+enum order_status {
+  pending
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
+enum payment_status {
+  unpaid
+  partial
+  paid
+  overdue
+}
+
+enum post_status {
+  draft
+  published
+  archived
+}
+
+enum priority_level {
+  Low
+  Normal
+  High
+}
+
+enum task_status {
+  Pending
+  In_Progress @map("In Progress")
+  Completed
+  Cancelled
+}
+
+enum todo_status {
+  pending
+  done
+}
+
+enum user_role {
+  admin
+  teacher
+  student
+  employee
+  doctor
+  staff
+}
