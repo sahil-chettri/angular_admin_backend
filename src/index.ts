@@ -1,14 +1,14 @@
-import express, { Request, Response } from 'express';
+import express from "express";
+import "./config/db";
 
 const app = express();
-const PORT = 3000;
 
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello, TypeScript + Express!');
+app.get("/", (req, res) => {
+  res.send("Backend Running");
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
