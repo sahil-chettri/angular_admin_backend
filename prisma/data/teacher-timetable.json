@@ -1,0 +1,379 @@
+{
+  "001": [
+    {
+      "day": "Monday",
+      "schedules": [
+        {
+          "class": "Class 3(B)",
+          "subject": "Science",
+          "subjectCode": "230",
+          "time": "9:00 AM - 09:45 AM",
+          "roomNo": "105"
+        },
+        {
+          "class": "Class 1(A)",
+          "subject": "Math",
+          "subjectCode": "201",
+          "time": "10:00 AM - 10:45 AM",
+          "roomNo": "110"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "schedules": [
+        {
+          "class": "Class 2(B)",
+          "subject": "English",
+          "subjectCode": "210",
+          "time": "9:30 AM - 10:00 AM",
+          "roomNo": "120"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "schedules": [
+        {
+          "class": "Class 5(C)",
+          "subject": "History",
+          "subjectCode": "220",
+          "time": "11:00 AM - 11:45 AM",
+          "roomNo": "115"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "schedules": [
+        {
+          "class": "Class 4(A)",
+          "subject": "Geography",
+          "subjectCode": "240",
+          "time": "8:30 AM - 9:15 AM",
+          "roomNo": "125"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "schedules": [
+        {
+          "class": "Class 1(C)",
+          "subject": "Art",
+          "subjectCode": "250",
+          "time": "10:15 AM - 11:00 AM",
+          "roomNo": "130"
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "schedules": [
+        {
+          "class": "Class 3(A)",
+          "subject": "Physical Education",
+          "subjectCode": "260",
+          "time": "12:00 PM - 12:45 PM",
+          "roomNo": "140"
+        }
+      ]
+    }
+  ],
+  "002": [
+    {
+      "day": "Monday",
+      "schedules": [
+        {
+          "class": "Class 4(D)",
+          "subject": "Science",
+          "subjectCode": "230",
+          "time": "9:30 AM - 10:15 AM",
+          "roomNo": "105"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "schedules": [
+        {
+          "class": "Class 1(A)",
+          "subject": "Math",
+          "subjectCode": "201",
+          "time": "10:00 AM - 10:45 AM",
+          "roomNo": "110"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "schedules": [
+        {
+          "class": "Class 2(B)",
+          "subject": "History",
+          "subjectCode": "220",
+          "time": "11:30 AM - 12:00 PM",
+          "roomNo": "115"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "schedules": [
+        {
+          "class": "Class 5(A)",
+          "subject": "Geography",
+          "subjectCode": "240",
+          "time": "9:15 AM - 9:45 AM",
+          "roomNo": "125"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "schedules": [
+        {
+          "class": "Class 3(C)",
+          "subject": "Music",
+          "subjectCode": "250",
+          "time": "11:00 AM - 11:30 AM",
+          "roomNo": "130"
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "schedules": [
+        {
+          "class": "Class 2(A)",
+          "subject": "Physical Education",
+          "subjectCode": "260",
+          "time": "12:15 PM - 12:45 PM",
+          "roomNo": "140"
+        }
+      ]
+    }
+  ],
+  "003": [
+    {
+      "day": "Monday",
+      "schedules": [
+        {
+          "class": "Class 5(C)",
+          "subject": "English",
+          "subjectCode": "210",
+          "time": "8:00 AM - 8:45 AM",
+          "roomNo": "105"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "schedules": [
+        {
+          "class": "Class 2(D)",
+          "subject": "Math",
+          "subjectCode": "201",
+          "time": "10:30 AM - 11:00 AM",
+          "roomNo": "110"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "schedules": [
+        {
+          "class": "Class 4(A)",
+          "subject": "Science",
+          "subjectCode": "230",
+          "time": "12:00 PM - 12:45 PM",
+          "roomNo": "115"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "schedules": [
+        {
+          "class": "Class 1(B)",
+          "subject": "Geography",
+          "subjectCode": "240",
+          "time": "8:45 AM - 9:15 AM",
+          "roomNo": "125"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "schedules": [
+        {
+          "class": "Class 3(C)",
+          "subject": "History",
+          "subjectCode": "220",
+          "time": "11:00 AM - 11:30 AM",
+          "roomNo": "130"
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "schedules": [
+        {
+          "class": "Class 4(B)",
+          "subject": "Physical Education",
+          "subjectCode": "260",
+          "time": "1:00 PM - 1:30 PM",
+          "roomNo": "140"
+        }
+      ]
+    }
+  ],
+  "004": [
+    {
+      "day": "Monday",
+      "schedules": [
+        {
+          "class": "Class 3(A)",
+          "subject": "Science",
+          "subjectCode": "230",
+          "time": "9:00 AM - 9:30 AM",
+          "roomNo": "105"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "schedules": [
+        {
+          "class": "Class 2(A)",
+          "subject": "Math",
+          "subjectCode": "201",
+          "time": "10:15 AM - 10:45 AM",
+          "roomNo": "110"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "schedules": [
+        {
+          "class": "Class 1(B)",
+          "subject": "English",
+          "subjectCode": "210",
+          "time": "8:00 AM - 8:30 AM",
+          "roomNo": "115"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "schedules": [
+        {
+          "class": "Class 5(D)",
+          "subject": "History",
+          "subjectCode": "220",
+          "time": "9:30 AM - 10:00 AM",
+          "roomNo": "125"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "schedules": [
+        {
+          "class": "Class 4(C)",
+          "subject": "Geography",
+          "subjectCode": "240",
+          "time": "11:15 AM - 11:45 AM",
+          "roomNo": "130"
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "schedules": [
+        {
+          "class": "Class 2(B)",
+          "subject": "Physical Education",
+          "subjectCode": "260",
+          "time": "12:30 PM - 1:00 PM",
+          "roomNo": "140"
+        }
+      ]
+    }
+  ],
+  "005": [
+    {
+      "day": "Monday",
+      "schedules": [
+        {
+          "class": "Class 1(A)",
+          "subject": "Math",
+          "subjectCode": "201",
+          "time": "10:00 AM - 10:45 AM",
+          "roomNo": "105"
+        }
+      ]
+    },
+    {
+      "day": "Tuesday",
+      "schedules": [
+        {
+          "class": "Class 4(A)",
+          "subject": "Science",
+          "subjectCode": "230",
+          "time": "8:30 AM - 9:00 AM",
+          "roomNo": "110"
+        }
+      ]
+    },
+    {
+      "day": "Wednesday",
+      "schedules": [
+        {
+          "class": "Class 3(C)",
+          "subject": "English",
+          "subjectCode": "210",
+          "time": "9:45 AM - 10:15 AM",
+          "roomNo": "115"
+        }
+      ]
+    },
+    {
+      "day": "Thursday",
+      "schedules": [
+        {
+          "class": "Class 5(D)",
+          "subject": "History",
+          "subjectCode": "220",
+          "time": "10:30 AM - 11:00 AM",
+          "roomNo": "125"
+        }
+      ]
+    },
+    {
+      "day": "Friday",
+      "schedules": [
+        {
+          "class": "Class 2(C)",
+          "subject": "Geography",
+          "subjectCode": "240",
+          "time": "9:15 AM - 9:45 AM",
+          "roomNo": "130"
+        }
+      ]
+    },
+    {
+      "day": "Saturday",
+      "schedules": [
+        {
+          "class": "Class 3(B)",
+          "subject": "Physical Education",
+          "subjectCode": "260",
+          "time": "1:30 PM - 2:00 PM",
+          "roomNo": "140"
+        }
+      ]
+    }
+  ]
+}
