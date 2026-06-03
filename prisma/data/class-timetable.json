@@ -1,0 +1,76 @@
+{
+  "timetable": [
+    {
+      "time": "08:00",
+      "Monday": "English Studies",
+      "Tuesday": "Lang. Lab / English Studies",
+      "Wednesday": "Physical Education",
+      "Thursday": "French Language",
+      "Friday": "Mathematics"
+    },
+    {
+      "time": "08:40",
+      "Monday": "Cultural and Creative Arts",
+      "Tuesday": "Mathematics",
+      "Wednesday": "English Diction",
+      "Thursday": "Mathematics",
+      "Friday": "English Studies"
+    },
+    {
+      "time": "09:20",
+      "Monday": "Mathematics",
+      "Tuesday": "English Studies",
+      "Wednesday": "Mathematics",
+      "Thursday": "Social Studies",
+      "Friday": "G.P / Voc. Apt"
+    },
+    {
+      "time": "10:00",
+      "Monday": "Break",
+      "Tuesday": "Break",
+      "Wednesday": "Break",
+      "Thursday": "Break",
+      "Friday": "Break"
+    },
+    {
+      "time": "10:40",
+      "Monday": "English Studies",
+      "Tuesday": "Mathematics",
+      "Wednesday": "Chinese Language / Creative Writing",
+      "Thursday": "Phonics",
+      "Friday": "Phonetics"
+    },
+    {
+      "time": "11:20",
+      "Monday": "Basic Science and Technology",
+      "Tuesday": "Health Education",
+      "Wednesday": "Cultural and Creative Arts",
+      "Thursday": "English Studies",
+      "Friday": "English Studies"
+    },
+    {
+      "time": "12:00",
+      "Monday": "Reading Eggs",
+      "Tuesday": "Handwriting / Ind. Reading",
+      "Wednesday": "Mathematics",
+      "Thursday": "Mathematics",
+      "Friday": "Mathematics"
+    },
+    {
+      "time": "12:40",
+      "Monday": "ICT",
+      "Tuesday": "News",
+      "Wednesday": "Handwriting / Ind. Reading",
+      "Thursday": "Handwriting / Ind. Reading",
+      "Friday": "Reading Club"
+    },
+    {
+      "time": "01:20",
+      "Monday": "Handwriting / Ind. Reading",
+      "Tuesday": "Civic Education",
+      "Wednesday": "English Studies",
+      "Thursday": "Mathematics",
+      "Friday": "Creative Arts"
+    }
+  ]
+}

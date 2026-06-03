@@ -1,0 +1,147 @@
+[
+    {
+        "leaveId": 1,
+        "leaveType": "Sick Leave",
+        "startDate": "2024-10-01",
+        "endDate": "2024-10-05",
+        "totalDays": 5,
+        "status": "Approved",
+        "dateSubmitted": "2024-09-25",
+        "reasonForLeave": "Flu",
+        "approver": "Principal Smith",
+        "comments": "Get well soon!"
+    },
+    {
+        "leaveId": 2,
+        "leaveType": "Personal Leave",
+        "startDate": "2024-10-10",
+        "endDate": "2024-10-12",
+        "totalDays": 3,
+        "status": "Pending",
+        "dateSubmitted": "2024-10-01",
+        "reasonForLeave": "Family commitment",
+        "approver": "",
+        "comments": ""
+    },
+    {
+        "leaveId": 3,
+        "leaveType": "Vacation",
+        "startDate": "2024-10-15",
+        "endDate": "2024-10-20",
+        "totalDays": 6,
+        "status": "Rejected",
+        "dateSubmitted": "2024-10-05",
+        "reasonForLeave": "Pre-planned trip",
+        "approver": "Principal Smith",
+        "comments": "Schedule conflicts with school events."
+    },
+    {
+        "leaveId": 4,
+        "leaveType": "Sick Leave",
+        "startDate": "2024-10-07",
+        "endDate": "2024-10-09",
+        "totalDays": 3,
+        "status": "Approved",
+        "dateSubmitted": "2024-10-01",
+        "reasonForLeave": "Medical procedure",
+        "approver": "Principal Smith",
+        "comments": "All the best for your recovery."
+    },
+    {
+        "leaveId": 5,
+        "leaveType": "Vacation",
+        "startDate": "2024-11-01",
+        "endDate": "2024-11-05",
+        "totalDays": 5,
+        "status": "Approved",
+        "dateSubmitted": "2024-10-02",
+        "reasonForLeave": "Family reunion",
+        "approver": "Principal Smith",
+        "comments": "Enjoy your time!"
+    },
+    {
+        "leaveId": 6,
+        "leaveType": "Personal Leave",
+        "startDate": "2024-11-10",
+        "endDate": "2024-11-12",
+        "totalDays": 3,
+        "status": "Pending",
+        "dateSubmitted": "2024-10-05",
+        "reasonForLeave": "Home repairs",
+        "approver": "",
+        "comments": ""
+    },
+    {
+        "leaveId": 7,
+        "leaveType": "Sick Leave",
+        "startDate": "2024-11-15",
+        "endDate": "2024-11-17",
+        "totalDays": 3,
+        "status": "Approved",
+        "dateSubmitted": "2024-11-01",
+        "reasonForLeave": "Migraine",
+        "approver": "Principal Smith",
+        "comments": "Take care!"
+    },
+    {
+        "leaveId": 8,
+        "leaveType": "Vacation",
+        "startDate": "2024-12-01",
+        "endDate": "2024-12-05",
+        "totalDays": 5,
+        "status": "Approved",
+        "dateSubmitted": "2024-11-10",
+        "reasonForLeave": "Holiday trip",
+        "approver": "Principal Smith",
+        "comments": "Safe travels!"
+    },
+    {
+        "leaveId": 9,
+        "leaveType": "Personal Leave",
+        "startDate": "2024-12-10",
+        "endDate": "2024-12-12",
+        "totalDays": 3,
+        "status": "Pending",
+        "dateSubmitted": "2024-11-20",
+        "reasonForLeave": "Appointment",
+        "approver": "",
+        "comments": ""
+    },
+    {
+        "leaveId": 10,
+        "leaveType": "Sick Leave",
+        "startDate": "2024-12-15",
+        "endDate": "2024-12-17",
+        "totalDays": 3,
+        "status": "Approved",
+        "dateSubmitted": "2024-12-01",
+        "reasonForLeave": "Flu",
+        "approver": "Principal Smith",
+        "comments": "Wishing you a speedy recovery!"
+    },
+    {
+        "leaveId": 11,
+        "leaveType": "Vacation",
+        "startDate": "2025-01-05",
+        "endDate": "2025-01-10",
+        "totalDays": 6,
+        "status": "Pending",
+        "dateSubmitted": "2024-12-05",
+        "reasonForLeave": "Winter getaway",
+        "approver": "",
+        "comments": ""
+    },
+    {
+        "leaveId": 12,
+        "leaveType": "Personal Leave",
+        "startDate": "2025-01-15",
+        "endDate": "2025-01-16",
+        "totalDays": 2,
+        "status": "Approved",
+        "dateSubmitted": "2024-12-10",
+        "reasonForLeave": "Personal matter",
+        "approver": "Principal Smith",
+        "comments": "Noted."
+    }
+  ]
+  
